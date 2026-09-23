@@ -32,6 +32,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 SOCKET_PATH = os.environ.get("TS_SOCKET", "/var/run/tailscale/tailscaled.sock")
 LISTEN_PORT = int(os.environ.get("LISTEN_PORT", "9810"))
 CACHE_SECONDS = float(os.environ.get("CACHE_SECONDS", "5"))
+APP_VERSION = os.environ.get("APP_VERSION", "unknown")
 
 _cache = {"ts": 0.0, "body": None}
 
@@ -87,6 +88,7 @@ def get_status():
         "advertised_routes": ", ".join(routes) if routes else "none",
         "key_expiry": key_expiry if key_expiry else "Never",
         "version": status.get("Version", "-"),
+        "exporter_version": APP_VERSION,  # this shim's own version, distinct from Tailscale's own "version" above
         "health_ok": len(health) == 0,
         "health": "OK" if not health else f"{len(health)} issue(s)",
         "health_issues": health,
